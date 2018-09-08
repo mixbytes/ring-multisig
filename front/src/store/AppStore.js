@@ -65,6 +65,11 @@ class AppStore {
     this.showAddVote = !this.showAddVote;
   }
 
+  @action("set votings")
+  setVotings(votings) {
+    this.votings = votings;
+  }
+
 }
 
 export default new AppStore();
