@@ -3,6 +3,7 @@ pragma solidity ^0.4.24;
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "../RingMultisigned.sol";
 import "../RingMultisig.sol";
+import {bn256g1 as Curve} from 'mobius-truffle-mixbytes/contracts/bn256g1.sol';
 
 contract Jury is Ownable, RingMultisigned {
 
@@ -47,34 +48,39 @@ contract Jury is Ownable, RingMultisigned {
         view
         returns (
             string judgmentMatter,
-            uint256[] publicKeys, //todo correct type
+            uint256[] publicKeysX,
+            uint256[] publicKeysY,
             uint256 juryThreshold,
             bool isGuilty,
-            uint256 alreadyMadeDecisions
+            uint256 alreadyMadeDecisions,
+            bytes32 message
         )
     {
         judgmentMatter = judgments[_num].judgmentMatter;
 
-        publicKeys = new uint256[](judgments[_num].ringMultisig.getPublicKeysCount());
-        for (uint i=0; i<publicKeys.length; i++) {
-            publicKeys[i] = judgments[_num].ringMultisig.publicKeys(i);
+        publicKeysX = new uint256[](judgments[_num].ringMultisig.getPublicKeysCount());
+        publicKeysY = new uint256[](publicKeysX.length);
+        for (uint i=0; i<publicKeysX.length; i++) {
+            (publicKeysX[i], publicKeysY[i]) = judgments[_num].ringMultisig.getPublicKey(i);
         }
-        juryThreshold = judgments[_num].ringMultisig.juryThreshold();
+        juryThreshold = judgments[_num].ringMultisig.threshold();
         isGuilty = judgments[_num].isGuilty;
         alreadyMadeDecisions = 0; // todo
+        message = judgments[_num].ringMultisig.getMessage();
     }
 
     /************************** PUBLIC **************************/
 
-    function add(string _judgmentMatter, uint256[] _publicKeys, uint256 _juryThreshold) public onlyOwner {
+    function add(string _judgmentMatter, uint256[] _publicKeysX, uint256[] _publicKeysY, uint256 _juryThreshold) public onlyOwner {
         require( 0 == judgmentsIndex[ hash(_judgmentMatter) ] );
-        require(_publicKeys.length>=_juryThreshold);
+        require(_publicKeysX.length == _publicKeysY.length);
+        require(_publicKeysX.length>=_juryThreshold);
 
         judgments.push(
             Judgment(
                 _judgmentMatter,
                 false,
-                new RingMultisig(_publicKeys, _juryThreshold) // todo proxy
+                new RingMultisig(_publicKeysX, _publicKeysY, _juryThreshold, hash(_judgmentMatter)) // todo proxy
             )
         );
 
