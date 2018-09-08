@@ -28,6 +28,24 @@ export let waitTx = (tx, txres, successCallback) => {
 
 }
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+function reduceJudgments (hashes, results, finalCallback) {
+  if (!hashes.length) {
+    finalCallback(results)
+    return
+  }
+  getContract().getJudgment(hashes.pop(), (error, response) => {
+    results.push(response)
+    reduceJudgments(hashes, results, finalCallback)
+  })
+}
+
+export let getJudgments = (finalCallback) => {
+  getContract().getJudgmentsIndexes((error, response) => {
+    if (error) {
+      alert(error)
+      return
+    }
+
+    reduceJudgments(response, [], finalCallback)
+  })
 }
