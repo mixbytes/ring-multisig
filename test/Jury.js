@@ -30,50 +30,47 @@ contract('Jury', function (accounts) {
 	let ring = {
 		  "pubkeys": [
 			{
-			  "x": "0x27b5902d9d609b0402f7db682b079d76f6f7e36094b9df0a748e5e406df5fb9c",
-			  "y": "0x271f95593df8e23a03b03764d75398148b9b2b5ac7f7af86f8e6180bbbf05a17"
+			  "x": "0x26db77bfb9f8a2876266d5302eb034769fdde10049b6849abb9f77592ccfb91d",
+			  "y": "0x1e40a7be578811ce812589748470effdb7f0185338ce63adcc2bf94f94c5180f"
 			},
 			{
-			  "x": "0xe7ff9affc33287edbbe8283cf5c93f423c2961bd0abcc7438b7c3e4f6cadc3c",
-			  "y": "0xe8ee9b2e51d6911257f7964770e1c218b7a0b1e4f3a5f2e14b25958978d5903"
+			  "x": "0x17697e6b2be2c0a6a169f12105d35021cedcaf4784f178c4a1f9d7a14f22b4cf",
+			  "y": "0x9ff14963bc007efecf73247b0e458dd2cac4ec2a7aa11a13a87b90843be5969"
 			},
 			{
-			  "x": "0x2ab5d96a50a40e17706abb81a9f139b77148755125d7dcac09b0270a835908cb",
-			  "y": "0x82f6e4dd7479539089a15cea722eb5ee98698b5ca1c2c9bb23b7f991513f1e6"
-			},
+			  "x": "0x5506a71b93730e9f8abc99b0ef8e2940fdfdfd2a6c3892bb3a5f47c4634e31c",
+			  "y": "0x163ec7c4820c2234c35c4b309573367def35441d8e14b7fd2a29f2e4cd19b12a"
+			}
 		  ],
 		  "privkeys": [
-			"0x14bc8131d0ddba5a50e9d20719e6907b831767902261233580858c20b3b7cf26",
-			"0x123d9f1531a73d2c05b3ea6311c70c7b0e7dc1afb37b3e0507196b54dc0300d1",
-			"0x9b9ebd0a8f0d2c1a84c2910d475873fb7abedf899d7dc8dd0360b3425795e20",
+			"0x16557fa436d7336e6e23092e4b4bc403bed70991044523338269a146257a0250",
+			"0x29af60404e8a85a51dad7bf906e76d632e662c66e6b614b591ec87e378eeb8d4",
+			"0x29fa71df1e3f3f5c4705a88e09600ef8fc7d5707f77aa7b04648a7a4c7f72276"
 		  ]
 		};
 
-	const N_signer = 1;
+	const N_signer = 0;
 
 	// [FIXME] - remove trash with substr
-	let message = "0x27b5902d9d609b0402f7db682b079d76f6f7e36094b9df0a748e5e406df5fb9c";
+	let message = "0x14462573adecc6b213bfd0290aea56d908c2b491d3a26b1e35febceb9153c784";
 	let hashp = bnCurve.hashInto(message.substr(2));
 
 	let pk = new BigInteger.BNCLASS(ring.privkeys[N_signer].substr(2), 16, "be");
 	pk = pk.umod(order);
 	// Calculate Tau
 	let hashSP = hashp.mul(pk);
-	await l(hashSP);
+	
+	await l(hashSP.serialize(true));
 
-	// [FIXME]!!!!!! = CHECK ZERO POINT
-	let G1 = bnCurve.pointFromCoordinates(1, 2); // zero point
 
-	// initialize both accumulators
-	let acc_b = G1;
-	let hashAcc = G1;
+	let hash_acc = bnCurve.hash(Buffer.concat([hashp.serialize(true).slice(0,32), hashSP.serialize(true)]));
 
 	let csum = new BigInteger.BNCLASS(0, 16, "be");
 
 	let gen = bnCurve.generator;
 
 	let ctlist = [];
-	let a = G1;
+	let a = bnCurve.zero;
 	let b;
 	let ri;
 
@@ -88,12 +85,12 @@ contract('Jury', function (accounts) {
 			let p1 = gen.mul(tj);
 			let pubk = bnCurve.pointFromCoordinates(ring.pubkeys[j].x.substr(2), ring.pubkeys[j].y.substr(2));
 			let p2 = pubk.mul(cj);
-			a = G1.add(p1).add(p2);
+			a = p1.add(p2);
 
 			// HashPointAdd returns the addition of hashSP scaled by cj and c scaled by tj
 			let p3 = hashp.mul(tj);
 			let p4 = hashSP.mul(cj);
-			b = acc_b.add(p3).add(p4);
+			b = p3.add(p4);
 
 			ctlist.push(cj);
 			ctlist.push(tj);
@@ -105,13 +102,36 @@ contract('Jury', function (accounts) {
 			let zero = new BigInteger.BNCLASS(0, 16, "be");
 			ctlist.push(zero);
 			ctlist.push(zero);
+			
 			// [TEMP] [FIXME] GENERATE RANDOM ri!!
-			let ri = csum;
-			a = G1.mul(ri);
+			let data = secureRandom(32, {type: 'Buffer'});                                                                    
+			let ri = new BN(data, 16, "be");       
+			a = gen.mul(ri);
 			b = hashp.mul(ri);
 		}
-		// hash_acc = magic-sha-marshall-accumulator
+		hash_acc = bnCurve.hash(Buffer.concat([hash_acc, a.serialize(true), b.serialize(true)]));
 	}
+
+	// [TODO] remove unneeded "umods"
+	let hashb = new BN(hash_acc, 16, "be");
+	hashb = hashb.umod(order);
+	
+	csum = csum.umod(order);
+
+	let c = new BN(hashb, 16, "be");
+	c = c.sub(csum).umod(order);
+	
+	let cx = new BN(c, 16, "be");
+	cx = cx.mul(pk).umod(order);
+
+	let ti = new BN(ri, 16, "be");
+	ti = ti.sub(cx).umod(order);
+
+	ctlist[2 * N_signer] = c;
+	ctlist[2 * N_signer + 1] = ti;
+
+	await l(ctlist);
+
   });
 
   it("complex test", async function () {
