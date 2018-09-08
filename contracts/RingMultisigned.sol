@@ -8,7 +8,7 @@ contract RingMultisigned {
 
 
 
-    modifier ringMultisigned(bytes32 topic, byte[] signature, uint256 threshold) {
+    modifier ringMultisigned(bytes32 topic, bytes32[32] signature, uint256 threshold) {
         _;
     }
 }
