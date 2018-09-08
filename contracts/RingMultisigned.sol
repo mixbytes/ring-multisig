@@ -10,11 +10,14 @@ contract RingMultisigned {
 
     }
 
-
-
-
     modifier ringMultisigned(RingMultisig _ringMultisig, uint256[2] _tagPoint, uint256[] _ctlist) {
+        require(_ringMultisig.getTagsCount() < _ringMultisig.threshold());
+
         require(_ringMultisig.isSignatureValid(_tagPoint, _ctlist));
-        _;
+        _ringMultisig.addTag(_tagPoint[0]);
+
+        if(_ringMultisig.getTagsCount() >= _ringMultisig.threshold()) {
+            _;
+        }
     }
 }
