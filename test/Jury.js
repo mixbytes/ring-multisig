@@ -1,7 +1,8 @@
 'use strict';
-const {ECCurve, ECPoint} = require("curve");
-const {SchnorrWitness} = require("schnorrWitness")
-const BigInteger = require("bigInteger");  
+
+import * as BigInteger from 'jsproover-mixbytes/prover/bigInteger/bigInteger';
+import { ECCurve } from 'jsproover-mixbytes/prover/curve/curve';
+
 const secureRandom = require("secure-random");
 const BN = require("bn.js");
 
@@ -54,7 +55,7 @@ contract('Jury', function (accounts) {
 	let message = "0x27b5902d9d609b0402f7db682b079d76f6f7e36094b9df0a748e5e406df5fb9c";
 	let hashp = bnCurve.hashInto(message.substr(2));
 
-	let pk = new BigInteger.BNCLASS(ring.privkeys[N_signer].substr(2), 16, "be"); 
+	let pk = new BigInteger.BNCLASS(ring.privkeys[N_signer].substr(2), 16, "be");
 	pk = pk.umod(order);
 	// Calculate Tau
 	let hashSP = hashp.mul(pk);
@@ -68,7 +69,7 @@ contract('Jury', function (accounts) {
 	let hashAcc = G1;
 
 	let csum = new BigInteger.BNCLASS(0, 16, "be");
-	
+
 	let gen = bnCurve.generator;
 
 	let ctlist = [];
@@ -78,9 +79,9 @@ contract('Jury', function (accounts) {
 
 	for(let j = 0; j < ring.pubkeys.length; j++) {
 		if (j != N_signer) {
-			let data = secureRandom(32, {type: 'Buffer'});                                                                        
-        	let cj = new BN(data, 16, "be");                                                                               
-        	data = secureRandom(32, {type: 'Buffer'});                                                                            
+			let data = secureRandom(32, {type: 'Buffer'});
+        	let cj = new BN(data, 16, "be");
+        	data = secureRandom(32, {type: 'Buffer'});
         	let tj = new BN(data, 16, "be");
 
 			// ParameterPointAdd returns the addition of c scaled by cj and tj as a curve poinT
@@ -101,7 +102,7 @@ contract('Jury', function (accounts) {
 		}
 
 		if (j == N_signer) {
-			let zero = new BigInteger.BNCLASS(0, 16, "be"); 
+			let zero = new BigInteger.BNCLASS(0, 16, "be");
 			ctlist.push(zero);
 			ctlist.push(zero);
 			// [TEMP] [FIXME] GENERATE RANDOM ri!!
