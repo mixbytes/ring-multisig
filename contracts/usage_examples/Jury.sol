@@ -9,7 +9,7 @@ import "../RingMultisig.sol";
  * Example of RingMultisig usage which runs several anonymous votes
  *
  */
-contract Jury is Ownable, RingMultisigned {
+contract Jury is /*Ownable,*/ RingMultisigned {
 
     constructor() public {
 
@@ -92,7 +92,7 @@ contract Jury is Ownable, RingMultisigned {
         uint256[] _publicKeysY,
         uint256 _juryThreshold,
         uint256 deadline
-    ) public onlyOwner {
+    ) public /*onlyOwner*/ {
         require( 0 == uint256(judgments[ hash(_judgmentMatter) ].judgmentMatterHash) );
         require(_publicKeysX.length == _publicKeysY.length);
         require(_publicKeysX.length>=_juryThreshold);

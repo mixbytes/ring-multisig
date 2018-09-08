@@ -15,7 +15,16 @@ require('babel-polyfill');
  *   },
  */
 
+var HDWalletProvider = require("truffle-hdwallet-provider");
+var mnemonic = "";
+
 module.exports = {
-  // See <http://truffleframework.com/docs/advanced/configuration>
-  // to customize your Truffle configuration!
+  networks: {
+    rinkeby: {
+      provider: function() {
+        return new HDWalletProvider(mnemonic, "https://rinkeby.infura.io/v3/")
+      },
+      network_id: 4
+    }
+  }
 };

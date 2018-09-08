@@ -38,7 +38,8 @@
     "openzeppelin-solidity": "^1.12.0",
     "secure-random": "^1.1.1",
     "solc": "^0.4.24",
-    "truffle": "^4.1.14"
+    "truffle": "^4.1.14",
+    "truffle-hdwallet-provider": "0.0.6"
   },
   "devDependencies": {}
 }

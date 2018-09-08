@@ -134,6 +134,21 @@ contract('Jury', function (accounts) {
 
   it("complex test", async function () {
 
+  	await jury.add(
+      'Do smth123',
+      [
+        "0x26db77bfb9f8a2876266d5302eb034769fdde10049b6849abb9f77592ccfb91d",
+        "0x17697e6b2be2c0a6a169f12105d35021cedcaf4784f178c4a1f9d7a14f22b4cf"
+      ],
+      [
+        "0x1e40a7be578811ce812589748470effdb7f0185338ce63adcc2bf94f94c5180f",
+        "0x9ff14963bc007efecf73247b0e458dd2cac4ec2a7aa11a13a87b90843be5969"
+      ],
+      2,
+      Math.round(new Date/1000) + 60,
+      {from: roles.owner}
+    );
+
     await jury.add(
       'Do smth',
       [
@@ -152,7 +167,7 @@ contract('Jury', function (accounts) {
     );
 
     let indexes = await jury.getJudgmentsIndexes();
-    let index0 = indexes[0];
+    let index0 = indexes[1];
 
     assert.equal(
       'Do smth',

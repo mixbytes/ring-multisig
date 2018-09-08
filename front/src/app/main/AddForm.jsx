@@ -26,6 +26,9 @@ class AddForm extends Component {
         keysY,
         e.formData.threshold,
         (new Date() / 1000) + e.formData.deadline * 60,
+        (smth, tx) => {
+          waitTx(tx, () => {alert('success')})
+        }
       );
     } catch (e) {
       alert(e.message);
