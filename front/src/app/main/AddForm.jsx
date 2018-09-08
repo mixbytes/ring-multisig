@@ -49,9 +49,9 @@ class AddForm extends Component {
     return (
       <div className="add-form">
         <Form schema={schema} uiSchema={uiSchema}
-          onChange={console.log("changed")}
-          onSubmit={console.log("submitted")}
-          onError={console.log("errors")}
+          onChange={() => console.log("changed")}
+          onSubmit={() => console.log("submitted")}
+          onError={() => console.log("errors")}
         >
           <div>
             <button type="submit">Submit vote</button>

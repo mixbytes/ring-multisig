@@ -123,9 +123,9 @@ class Voting extends Component {
         {isActive &&
           <div className="vote_form">
             <Form schema={schema}
-              onChange={console.log("changed")}
-              onSubmit={console.log("submitted")}
-              onError={console.log("errors")}
+              onChange={() => console.log("changed")}
+              onSubmit={() => console.log("submitted")}
+              onError={() => console.log("errors")}
             >
               <div className="vote_btn">
                 <button className="btn" type="submit">Cast a Vote</button>
