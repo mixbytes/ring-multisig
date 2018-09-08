@@ -3,8 +3,12 @@ pragma solidity ^0.4.24;
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "../RingMultisigned.sol";
 import "../RingMultisig.sol";
-import {bn256g1 as Curve} from 'mobius-truffle-mixbytes/contracts/bn256g1.sol';
 
+
+/**
+ * Example of RingMultisig usage which runs several anonymous votes
+ *
+ */
 contract Jury is Ownable, RingMultisigned {
 
     constructor() public {
@@ -18,6 +22,7 @@ contract Jury is Ownable, RingMultisigned {
         bytes32 judgmentMatterHash;
         bool isGuilty;
         RingMultisig ringMultisig;
+        uint256 deadline;
     }
 
     /************************** PROPERTIES **************************/
@@ -29,6 +34,11 @@ contract Jury is Ownable, RingMultisigned {
 
     modifier correctJudgmentHash(bytes32 _judgmentsHash) {
         require(0 != uint256(judgments[_judgmentsHash].judgmentMatterHash));
+        _;
+    }
+
+    modifier beforeDeadline(bytes32 _judgmentsHash) {
+        require(judgments[_judgmentsHash].deadline > now);
         _;
     }
 
@@ -55,7 +65,7 @@ contract Jury is Ownable, RingMultisigned {
             uint256 juryThreshold,
             bool isGuilty,
             uint256 alreadyMadeDecisions,
-            bytes32 message
+            bytes32 message //unique hash used to create ring signature
         )
     {
         judgmentMatter = judgments[_index].judgmentMatter;
@@ -73,11 +83,15 @@ contract Jury is Ownable, RingMultisigned {
 
     /************************** PUBLIC **************************/
 
+    /**
+     * Add new element to list of structures
+     **/
     function add(
         string _judgmentMatter,
         uint256[] _publicKeysX,
         uint256[] _publicKeysY,
-        uint256 _juryThreshold // todo period
+        uint256 _juryThreshold,
+        uint256 deadline
     ) public onlyOwner {
         require( 0 == uint256(judgments[ hash(_judgmentMatter) ].judgmentMatterHash) );
         require(_publicKeysX.length == _publicKeysY.length);
@@ -88,14 +102,20 @@ contract Jury is Ownable, RingMultisigned {
                 _judgmentMatter,
                 hash(_judgmentMatter),
                 false,
-                new RingMultisig(_publicKeysX, _publicKeysY, _juryThreshold, hash(_judgmentMatter)) // todo proxy
+                new RingMultisig(_publicKeysX, _publicKeysY, _juryThreshold, hash(_judgmentMatter)), // todo proxy
+                deadline
             );
 
         judgmentsIndexes.push( hash(_judgmentMatter) );
     }
 
+    /**
+     * Jury "vote" by this method. `ringMultisigned` checks signature correctness and
+     * runs method after threshold reached
+     */
     function guilty(bytes32 _judgmentsHash, uint256[2] _tagPoint, uint256[] ctlist)
         public
+        beforeDeadline(_judgmentsHash)
         correctJudgmentHash(_judgmentsHash)
         ringMultisigned(
             judgments[_judgmentsHash ].ringMultisig,

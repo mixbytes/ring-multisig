@@ -8,6 +8,7 @@ export const screens = {
 class AppStore {
   @observable currentScreen;
   @observable votings;
+  @observable showAddVote;
 
   constructor() {
     this.currentScreen = screens.MAIN;
@@ -26,7 +27,7 @@ class AppStore {
       duration: 24
     }, {
       creator: '0x65dd7690901500fdd6b26f0a4d722e1e859ad301',
-      topic: 'Should we disconnect from ventilator mrs. Illady?',
+      topic: 'Should we disconnect from life support mrs. Illady?',
       juryPks: [
         ['0x4faf79ffc854e56c3012a6ecd55583fdc32b7eb5', '0x4faf79ffc854e56c3012a6ecd55583fdc32b7eb5'],
         ['0x8528bc8e97b54568ba2660d300b135b14fb2dee1', '0x8528bc8e97b54568ba2660d300b135b14fb2dee1'],
@@ -50,12 +51,18 @@ class AppStore {
       votes: 3,
       startTime: '1536340200',
       duration: 96
-    }]
+    }];
+    this.showAddVote = false;
   }
 
   @action("set currentScreen")
   setCurrentScreen(currentScreen) {
     this.currentScreen = currentScreen;
+  }
+
+  @action("toggle add vote")
+  toggleAddVote() {
+    this.showAddVote = !this.showAddVote;
   }
 
 }
