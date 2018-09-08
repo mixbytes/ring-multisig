@@ -1,18 +1,43 @@
 import React, { Component } from "react";
 import { observer } from "mobx-react";
-import classNames from "classnames";
 import Form from "react-jsonschema-form";
 
-import AppStore from "../../store/AppStore";
-
 import "./AddForm.less";
+import { getContract } from '../../lib/eth'
 
 @observer
 class AddForm extends Component {
+
+  addJudgment (e, d) {
+
+    let keysX = [];
+    let keysY = [];
+    e.formData.publicKeys.trim().split('\n').forEach(el => {
+      let a,b;
+      [a,b] = el.split(',')
+      keysX.push(a.trim())
+      keysY.push(b.trim())
+    })
+
+    try {
+      getContract().add(
+        e.formData.judgmentMatter,
+        keysX,
+        keysY,
+        e.formData.threshold,
+        (new Date() / 1000) + e.formData.deadline * 60,
+      );
+    } catch (e) {
+      alert(e.message);
+    }
+
+  }
+
   render() {
     const schema = {
       type: "object",
       required: ["judgmentMatter", "publicKeys", "threshold", "deadline"],
+      description: "For demonstration purposes everyone can add Judgement. In real life only real Judge must be able to do this",
       properties: {
         judgmentMatter: {
           type: "string",
@@ -31,7 +56,7 @@ class AddForm extends Component {
         },
         deadline: {
           type: "integer",
-          title: "Voting deadline (Unix timestamp)",
+          title: "Time to make decision (in minutes)",
         }
       }
     };
@@ -50,7 +75,7 @@ class AddForm extends Component {
       <div className="add-form">
         <Form schema={schema} uiSchema={uiSchema}
           onChange={() => console.log("changed")}
-          onSubmit={() => console.log("submitted")}
+          onSubmit={this.addJudgment}
           onError={() => console.log("errors")}
         >
           <div>
