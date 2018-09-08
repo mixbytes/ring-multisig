@@ -15,24 +15,40 @@ contract('Jury', function (accounts) {
     jury = await Jury.new({from: roles.owner});
   });
 
-  it("test", async function () {
+  it("complex test", async function () {
 
     await jury.add(
       'Do smth',
-      ["0x27e073fe3485b7ab97de5813342c3ce3dd19eba467a6b5f61b092813e67325e2", "0xf5165507a4f67c89fd40603a3765e53a3656bf3c247421b6a69a05e0a7fabb"],
-      ["0x639bbbc72ef12bc7449c08a4ac2d7d7a9ed0484e4d5d6ee4f4b6fa5844043c2", "0x6d9e4c9c4054e9f1f5d27cfad56c034f1654bc88ae6916722424c565976ef88"],
-      1,
+      [
+        "0x26db77bfb9f8a2876266d5302eb034769fdde10049b6849abb9f77592ccfb91d",
+        "0x17697e6b2be2c0a6a169f12105d35021cedcaf4784f178c4a1f9d7a14f22b4cf",
+        "0x5506a71b93730e9f8abc99b0ef8e2940fdfdfd2a6c3892bb3a5f47c4634e31c"
+      ],
+      [
+        "0x1e40a7be578811ce812589748470effdb7f0185338ce63adcc2bf94f94c5180f",
+        "0x9ff14963bc007efecf73247b0e458dd2cac4ec2a7aa11a13a87b90843be5969",
+        "0x163ec7c4820c2234c35c4b309573367def35441d8e14b7fd2a29f2e4cd19b12a"
+      ],
+      2,
       {from: roles.owner}
     );
-    assert.equal(
-      'Do smth',
-      (await jury.getJudgment(1))[0]
-    );
+
+    let indexes = await jury.getJudgmentsIndexes();
+    let index0 = indexes[0];
 
     assert.equal(
-      "0xf5165507a4f67c89fd40603a3765e53a3656bf3c247421b6a69a05e0a7fabb",
+      'Do smth',
+      (await jury.getJudgment(index0))[0]
+    );
+    assert.equal(
+      "0x17697e6b2be2c0a6a169f12105d35021cedcaf4784f178c4a1f9d7a14f22b4cf",
       web3.toHex((await jury.getJudgment(1))[1][1])
     );
+    // message 0x1eb85e5a5c307e437593ffd4e1a37ec30ef6dfeddcfb1c8e312de7c2a9af3196
+
+    //await jury.guily
+
+    //l(await jury.getJudgment(1));
   });
 
 

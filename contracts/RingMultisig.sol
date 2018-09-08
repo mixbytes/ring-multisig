@@ -49,4 +49,8 @@ contract RingMultisig is Ownable {
         return ringData.message();
     }
 
+    function isSignatureValid(uint256[2] _tagPoint, uint256[] _ctlist) public view returns (bool) {
+        return ringData.isSignatureValid(_tagPoint[0], _tagPoint[1], _ctlist);
+    }
+
 }
