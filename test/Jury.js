@@ -22,51 +22,25 @@ contract('Jury', function (accounts) {
   });
 
 
-  it("curve test", async function () {
+  function getRingSignature(message, ringdata) {
 	const bnCurve = new ECCurve('bn256');
 	const order = bnCurve.order;
 	const signatureGenerator = bnCurve.generator;
 
-	let ring = {
-		  "pubkeys": [
-			{
-			  "x": "0x26db77bfb9f8a2876266d5302eb034769fdde10049b6849abb9f77592ccfb91d",
-			  "y": "0x1e40a7be578811ce812589748470effdb7f0185338ce63adcc2bf94f94c5180f"
-			},
-			{
-			  "x": "0x17697e6b2be2c0a6a169f12105d35021cedcaf4784f178c4a1f9d7a14f22b4cf",
-			  "y": "0x9ff14963bc007efecf73247b0e458dd2cac4ec2a7aa11a13a87b90843be5969"
-			},
-			{
-			  "x": "0x5506a71b93730e9f8abc99b0ef8e2940fdfdfd2a6c3892bb3a5f47c4634e31c",
-			  "y": "0x163ec7c4820c2234c35c4b309573367def35441d8e14b7fd2a29f2e4cd19b12a"
-			}
-		  ],
-		  "privkeys": [
-			"0x16557fa436d7336e6e23092e4b4bc403bed70991044523338269a146257a0250",
-			"0x29af60404e8a85a51dad7bf906e76d632e662c66e6b614b591ec87e378eeb8d4",
-			"0x29fa71df1e3f3f5c4705a88e09600ef8fc7d5707f77aa7b04648a7a4c7f72276"
-		  ]
-		};
-
-	const N_signer = 0;
+	const N_signer = ringdata.privkeyindex;
+	let pk = new BigInteger.BNCLASS(ringdata.privkey.substr(2), 16, "be")
+	pk = pk.umod(order);
 
 	// [FIXME] - remove trash with substr
-	let message = "0x14462573adecc6b213bfd0290aea56d908c2b491d3a26b1e35febceb9153c784";
+	// let message = "0x14462573adecc6b213bfd0290aea56d908c2b491d3a26b1e35febceb9153c784";
 	let hashp = bnCurve.hashInto(message.substr(2));
 
-	let pk = new BigInteger.BNCLASS(ring.privkeys[N_signer].substr(2), 16, "be");
-	pk = pk.umod(order);
 	// Calculate Tau
 	let hashSP = hashp.mul(pk);
-	
-	await l(hashSP.serialize(true));
-
+	// await l(hashSP.serialize(true));
 
 	let hash_acc = bnCurve.hash(Buffer.concat([hashp.serialize(true).slice(0,32), hashSP.serialize(true)]));
-
 	let csum = new BigInteger.BNCLASS(0, 16, "be");
-
 	let gen = bnCurve.generator;
 
 	let ctlist = [];
@@ -74,7 +48,7 @@ contract('Jury', function (accounts) {
 	let b;
 	let ri;
 
-	for(let j = 0; j < ring.pubkeys.length; j++) {
+	for(let j = 0; j < ringdata.pubkeys.length; j++) {
 		if (j != N_signer) {
 			let data = secureRandom(32, {type: 'Buffer'});
         	let cj = new BN(data, 16, "be");
@@ -83,7 +57,7 @@ contract('Jury', function (accounts) {
 
 			// ParameterPointAdd returns the addition of c scaled by cj and tj as a curve poinT
 			let p1 = gen.mul(tj);
-			let pubk = bnCurve.pointFromCoordinates(ring.pubkeys[j].x.substr(2), ring.pubkeys[j].y.substr(2));
+			let pubk = bnCurve.pointFromCoordinates(ringdata.pubkeys[j].x.substr(2), ringdata.pubkeys[j].y.substr(2));
 			let p2 = pubk.mul(cj);
 			a = p1.add(p2);
 
@@ -130,7 +104,31 @@ contract('Jury', function (accounts) {
 	ctlist[2 * N_signer] = c;
 	ctlist[2 * N_signer + 1] = ti;
 
-	await l(ctlist);
+	return { "tau": hashSP.serialize(true), "ctlist": ctlist };
+  }
+
+  it("curve test", async function () {
+	let ringdata = {
+		  "pubkeys": [
+			{
+			  "x": "0x26db77bfb9f8a2876266d5302eb034769fdde10049b6849abb9f77592ccfb91d",
+			  "y": "0x1e40a7be578811ce812589748470effdb7f0185338ce63adcc2bf94f94c5180f"
+			},
+			{
+			  "x": "0x17697e6b2be2c0a6a169f12105d35021cedcaf4784f178c4a1f9d7a14f22b4cf",
+			  "y": "0x9ff14963bc007efecf73247b0e458dd2cac4ec2a7aa11a13a87b90843be5969"
+			},
+			{
+			  "x": "0x5506a71b93730e9f8abc99b0ef8e2940fdfdfd2a6c3892bb3a5f47c4634e31c",
+			  "y": "0x163ec7c4820c2234c35c4b309573367def35441d8e14b7fd2a29f2e4cd19b12a"
+			}
+		  ],
+		  "privkey": "0x29af60404e8a85a51dad7bf906e76d632e662c66e6b614b591ec87e378eeb8d4",
+		  "privkeyindex" : 1
+		};
+		let message = "0x14462573adecc6b213bfd0290aea56d908c2b491d3a26b1e35febceb9153c784";	
+		let res = getRingSignature(message, ringdata);
+		// await l(res);
 
   });
 
