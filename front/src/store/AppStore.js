@@ -8,6 +8,7 @@ export const screens = {
 class AppStore {
   @observable currentScreen;
   @observable votings;
+  @observable showAddVote;
 
   constructor() {
     this.currentScreen = screens.MAIN;
@@ -50,12 +51,18 @@ class AppStore {
       votes: 3,
       startTime: '1536340200',
       duration: 96
-    }]
+    }];
+    this.showAddVote = false;
   }
 
   @action("set currentScreen")
   setCurrentScreen(currentScreen) {
     this.currentScreen = currentScreen;
+  }
+
+  @action("toggle add vote")
+  toggleAddVote() {
+    this.showAddVote = !this.showAddVote;
   }
 
 }

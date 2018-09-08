@@ -3,12 +3,13 @@ import { observer } from "mobx-react";
 import classNames from "classnames";
 import moment from 'moment';
 
+import AppStore from "../../store/AppStore";
+import AddForm from "./AddForm";
+
 import "./Main.less";
-import AppStore, { screens } from "../../store/AppStore";
 
 @observer
 class Main extends Component {
-
   Voting(voting, i) {
     let startTime = moment.unix(voting.startTime);
     let endTime = startTime.clone().add({hours: voting.duration});
@@ -119,11 +120,17 @@ class Main extends Component {
 
   render() {
     let votings = AppStore.votings;
+
     return (
       <div>
         <div className="add_btn">
-          <button className="btn">Add some new fatal voting</button>
+          <button className="btn" onClick={AppStore.toggleAddVote.bind(AppStore)}>Add some new fatal voting</button>
         </div>
+
+        {AppStore.showAddVote &&
+          <AddForm />
+        }
+
         {votings &&
           votings.map((voting, i) => (
             this.Voting(voting, i)
