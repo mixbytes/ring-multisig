@@ -33,8 +33,12 @@ contract RingMultisig is Ownable {
 
     /************************** PUBLIC **************************/
 
-    function addSign(uint256[32] _sign) public onlyOwner {
+    function addTag(uint256 tag_x) public onlyOwner {
+        ringData.tagAdd(tag_x);
+    }
 
+    function getTagsCount() public view returns (uint256) {
+        return ringData.tags.length;
     }
 
     function getPublicKeysCount() public view returns (uint256) {

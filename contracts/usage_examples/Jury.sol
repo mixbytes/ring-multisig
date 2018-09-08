@@ -67,7 +67,7 @@ contract Jury is Ownable, RingMultisigned {
         }
         juryThreshold = judgments[_index].ringMultisig.threshold();
         isGuilty = judgments[_index].isGuilty;
-        alreadyMadeDecisions = 0; // todo
+        alreadyMadeDecisions = judgments[_index].ringMultisig.getTagsCount();
         message = judgments[_index].ringMultisig.getMessage();
     }
 
