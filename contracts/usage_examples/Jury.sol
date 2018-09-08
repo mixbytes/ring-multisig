@@ -9,7 +9,7 @@ contract Jury is Ownable, RingMultisigned {
         judgments.push( // dummy
             Judgment(
                 '',
-                0,
+                new bytes32[](0),
                 0,
                 false
             )
@@ -20,7 +20,7 @@ contract Jury is Ownable, RingMultisigned {
 
     struct Judgment {
         string judgmentMatter;
-        uint256 juryCount;
+        bytes32[] publicKeys;
         uint256 juryThreshold;
         bool isGuilty;
     }
@@ -48,14 +48,14 @@ contract Jury is Ownable, RingMultisigned {
         view
         returns (
             string judgmentMatter,
-            uint juryCount,
+            bytes32[] publicKeys, //todo correct type
             uint juryThreshold,
             bool isGuilty,
             uint alreadyMadeDecision
         )
     {
         judgmentMatter = judgments[_num].judgmentMatter;
-        juryCount = judgments[_num].juryCount;
+        publicKeys = judgments[_num].publicKeys;
         juryThreshold = judgments[_num].juryThreshold;
         isGuilty = judgments[_num].isGuilty;
         alreadyMadeDecision = 0; // todo
@@ -63,13 +63,14 @@ contract Jury is Ownable, RingMultisigned {
 
     /************************** PUBLIC **************************/
 
-    function add(string _judgmentMatter, uint256 _juryCount, uint256 _juryThreshold) public onlyOwner {
+    function add(string _judgmentMatter, bytes32[] _publicKeys, uint256 _juryThreshold) public onlyOwner {
         require( 0 == judgmentsIndex[ hash(_judgmentMatter) ] );
+        require(_publicKeys.length>=_juryThreshold);
 
         judgments.push(
             Judgment(
                 _judgmentMatter,
-                _juryCount,
+                _publicKeys,
                 _juryThreshold,
                 false
             )

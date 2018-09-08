@@ -3,7 +3,7 @@
 const Jury = artifacts.require("Jury.sol");
 const l = console.log;
 
-contract('Exchange', function (accounts) {
+contract('Jury', function (accounts) {
 
   const roles = {
     owner: accounts[7],
@@ -17,7 +17,7 @@ contract('Exchange', function (accounts) {
 
   it("test", async function () {
 
-    await jury.add('Do smth', 12, 7, {from: roles.owner});
+    await jury.add('Do smth', ['0x1', '0x2'], 1, {from: roles.owner});
     assert.equal(
       'Do smth',
       (await jury.getJudgment(1))[0]
