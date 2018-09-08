@@ -3,8 +3,12 @@ pragma solidity ^0.4.24;
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "../RingMultisigned.sol";
 import "../RingMultisig.sol";
-import {bn256g1 as Curve} from 'mobius-truffle-mixbytes/contracts/bn256g1.sol';
 
+
+/**
+ * Example of RingMultisig usage which runs several anonymous votes
+ *
+ */
 contract Jury is Ownable, RingMultisigned {
 
     constructor() public {
@@ -105,6 +109,10 @@ contract Jury is Ownable, RingMultisigned {
         judgmentsIndexes.push( hash(_judgmentMatter) );
     }
 
+    /**
+     * Jury "vote" by this method. `ringMultisigned` checks signature correctness and
+     * runs method after threshold reached
+     */
     function guilty(bytes32 _judgmentsHash, uint256[2] _tagPoint, uint256[] ctlist)
         public
         beforeDeadline(_judgmentsHash)

@@ -31,6 +31,19 @@ contract RingMultisig is Ownable {
 
     /************************** MODIFIERS **************************/
 
+    /**
+     * Modifier which restricts execution of function until `threshold` signatures will be send
+     */
+    modifier ringMultisigned(uint256[2] _tagPoint, uint256[] _ctlist) {
+        require(getTagsCount() < threshold);
+
+        require(isSignatureValid(_tagPoint, _ctlist));
+        addTag(_tagPoint[0]);
+
+        if(getTagsCount() >= threshold) {
+            _;
+        }
+    }
 
     /************************** PUBLIC **************************/
 

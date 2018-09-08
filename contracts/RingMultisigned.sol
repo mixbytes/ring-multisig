@@ -10,6 +10,9 @@ contract RingMultisigned {
 
     }
 
+    /**
+     * Modifier which restricts execution of function until `threshold` signatures will be send
+     */
     modifier ringMultisigned(RingMultisig _ringMultisig, uint256[2] _tagPoint, uint256[] _ctlist) {
         require(_ringMultisig.getTagsCount() < _ringMultisig.threshold());
 
