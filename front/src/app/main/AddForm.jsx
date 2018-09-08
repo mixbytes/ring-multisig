@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import Form from "react-jsonschema-form";
 
 import "./AddForm.less";
-import { getContract } from '../../lib/eth'
+import { getContract, waitTx } from '../../lib/eth'
 
 @observer
 class AddForm extends Component {
@@ -27,7 +27,7 @@ class AddForm extends Component {
         e.formData.threshold,
         (new Date() / 1000) + e.formData.deadline * 60,
         (smth, tx) => {
-          waitTx(tx, () => {alert('success')})
+          waitTx(tx, null, () => {alert('success')})
         }
       );
     } catch (e) {

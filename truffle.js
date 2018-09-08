@@ -16,13 +16,13 @@ require('babel-polyfill');
  */
 
 var HDWalletProvider = require("truffle-hdwallet-provider");
-var mnemonic = "";
+var mnemonic = "solve confirm gospel chaos pulse remain castle bus draft forest giraffe air";
 
 module.exports = {
   networks: {
     rinkeby: {
       provider: function() {
-        return new HDWalletProvider(mnemonic, "https://rinkeby.infura.io/v3/")
+        return new HDWalletProvider(mnemonic, "https://rinkeby.infura.io/v3/6d984511eea5487fb3720b0009404532")
       },
       network_id: 4
     }

@@ -9,19 +9,23 @@ export let getContract = function() {
   return web3.eth.contract(Jury.abi).at(constants.contract_addr);
 };
 
-export let waitTx = async (tx, successCallback) => {
-  if (tx) {
+export let waitTx = (tx, txres, successCallback) => {
+  if (txres) {
     return successCallback()
   }
-  console.log(123)
-  await sleep(3000);
-  web3.eth.getTransactionReceipt(
-    error,
-    tx,
-    async (smth, tx) => {
-      waitTx(tx, successCallback)
-    }
+
+  setTimeout(
+    () => {
+      web3.eth.getTransactionReceipt(
+        tx,
+        (smth, txres) => {
+          waitTx(tx, txres, successCallback)
+        }
+      )
+    },
+    3000
   )
+
 }
 
 function sleep(ms) {
