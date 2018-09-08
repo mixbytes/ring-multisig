@@ -17,10 +17,15 @@ contract('Jury', function (accounts) {
 
   it("test", async function () {
 
-    await jury.add('Do smth', ['0x1', '0x2'], 1, {from: roles.owner});
+    await jury.add('Do smth', [1, 2], 1, {from: roles.owner});
     assert.equal(
       'Do smth',
       (await jury.getJudgment(1))[0]
+    );
+
+    assert.equal(
+      2,
+      (await jury.getJudgment(1))[1][1].valueOf()
     );
   });
 

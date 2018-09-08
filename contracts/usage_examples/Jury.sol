@@ -2,6 +2,7 @@ pragma solidity ^0.4.24;
 
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "../RingMultisigned.sol";
+import "../RingMultisig.sol";
 
 contract Jury is Ownable, RingMultisigned {
 
@@ -9,9 +10,8 @@ contract Jury is Ownable, RingMultisigned {
         judgments.push( // dummy
             Judgment(
                 '',
-                new bytes32[](0),
-                0,
-                false
+                false,
+                RingMultisig(0x0)
             )
         );
     }
@@ -20,9 +20,8 @@ contract Jury is Ownable, RingMultisigned {
 
     struct Judgment {
         string judgmentMatter;
-        bytes32[] publicKeys;
-        uint256 juryThreshold;
         bool isGuilty;
+        RingMultisig ringMultisig;
     }
 
     /************************** PROPERTIES **************************/
@@ -48,31 +47,34 @@ contract Jury is Ownable, RingMultisigned {
         view
         returns (
             string judgmentMatter,
-            bytes32[] publicKeys, //todo correct type
-            uint juryThreshold,
+            uint256[] publicKeys, //todo correct type
+            uint256 juryThreshold,
             bool isGuilty,
-            uint alreadyMadeDecision
+            uint256 alreadyMadeDecisions
         )
     {
         judgmentMatter = judgments[_num].judgmentMatter;
-        publicKeys = judgments[_num].publicKeys;
-        juryThreshold = judgments[_num].juryThreshold;
+
+        publicKeys = new uint256[](judgments[_num].ringMultisig.getPublicKeysCount());
+        for (uint i=0; i<publicKeys.length; i++) {
+            publicKeys[i] = judgments[_num].ringMultisig.publicKeys(i);
+        }
+        juryThreshold = judgments[_num].ringMultisig.juryThreshold();
         isGuilty = judgments[_num].isGuilty;
-        alreadyMadeDecision = 0; // todo
+        alreadyMadeDecisions = 0; // todo
     }
 
     /************************** PUBLIC **************************/
 
-    function add(string _judgmentMatter, bytes32[] _publicKeys, uint256 _juryThreshold) public onlyOwner {
+    function add(string _judgmentMatter, uint256[] _publicKeys, uint256 _juryThreshold) public onlyOwner {
         require( 0 == judgmentsIndex[ hash(_judgmentMatter) ] );
         require(_publicKeys.length>=_juryThreshold);
 
         judgments.push(
             Judgment(
                 _judgmentMatter,
-                _publicKeys,
-                _juryThreshold,
-                false
+                false,
+                new RingMultisig(_publicKeys, _juryThreshold) // todo proxy
             )
         );
 
@@ -83,9 +85,8 @@ contract Jury is Ownable, RingMultisigned {
         public
         correctJudgmentHash(_judgmentsHash)
         ringMultisigned(
-            _judgmentsHash,
-            _signature,
-            judgments[ judgmentsIndex[_judgmentsHash] ].juryThreshold
+            judgments[ judgmentsIndex[_judgmentsHash] ].ringMultisig,
+            _signature
         )
     {
         judgments[ judgmentsIndex[_judgmentsHash] ].isGuilty = true;

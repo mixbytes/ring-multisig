@@ -1,5 +1,7 @@
 pragma solidity ^0.4.24;
 
+import "./RingMultisig.sol";
+
 contract RingMultisigned {
     constructor() public {
 
@@ -8,7 +10,7 @@ contract RingMultisigned {
 
 
 
-    modifier ringMultisigned(bytes32 topic, bytes32[32] signature, uint256 threshold) {
+    modifier ringMultisigned(RingMultisig ringMultisig, bytes32[32] signature) {
         _;
     }
 }
