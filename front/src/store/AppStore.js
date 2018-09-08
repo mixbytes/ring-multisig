@@ -53,6 +53,7 @@ class AppStore {
       duration: 96
     }];
     this.showAddVote = false;
+    this.showLoader = false;
   }
 
   @action("set currentScreen")
@@ -68,6 +69,11 @@ class AppStore {
   @action("set votings")
   setVotings(votings) {
     this.votings = votings;
+  }
+
+  @action("toggle loader")
+  toggleLoader() {
+    this.showLoader = !this.showLoader;
   }
 
 }
