@@ -30,6 +30,7 @@ contract('Jury', function (accounts) {
         "0x163ec7c4820c2234c35c4b309573367def35441d8e14b7fd2a29f2e4cd19b12a"
       ],
       2,
+      Math.round(new Date/1000) + 60,
       {from: roles.owner}
     );
 

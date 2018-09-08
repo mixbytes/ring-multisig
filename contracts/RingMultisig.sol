@@ -2,7 +2,6 @@ pragma solidity ^0.4.24;
 
 import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 import "mobius-truffle-mixbytes/contracts/LinkableRing.sol";
-import {bn256g1 as Curve} from 'mobius-truffle-mixbytes/contracts/bn256g1.sol';
 
 contract RingMultisig is Ownable {
     using LinkableRing for LinkableRing.Data;
@@ -11,7 +10,7 @@ contract RingMultisig is Ownable {
         uint256[] _publicKeysX,
         uint256[] _publicKeysY,
         uint256 _threshold,
-        bytes32 _guid
+        bytes32 _guid // some random bytes (unique)
     ) public {
         require(_publicKeysX.length == _publicKeysY.length);
         require(_publicKeysX.length >= _threshold);
@@ -30,12 +29,15 @@ contract RingMultisig is Ownable {
     uint256 public threshold;
     LinkableRing.Data ringData;
 
+    /************************** MODIFIERS **************************/
+
 
     /************************** PUBLIC **************************/
 
     function addTag(uint256 tag_x) public onlyOwner {
         ringData.tagAdd(tag_x);
     }
+
 
     function getTagsCount() public view returns (uint256) {
         return ringData.tags.length;
