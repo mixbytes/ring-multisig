@@ -1,4 +1,9 @@
 'use strict';
+const {ECCurve, ECPoint} = require("curve");
+const {SchnorrWitness} = require("schnorrWitness")
+const BigInteger = require("bigInteger");  
+const secureRandom = require("secure-random");
+const BN = require("bn.js");
 
 const Jury = artifacts.require("Jury.sol");
 const l = console.log;
@@ -13,6 +18,99 @@ contract('Jury', function (accounts) {
 
   beforeEach(async function () {
     jury = await Jury.new({from: roles.owner});
+  });
+
+
+  it("curve test", async function () {
+	const bnCurve = new ECCurve('bn256');
+	const order = bnCurve.order;
+	const signatureGenerator = bnCurve.generator;
+
+	let ring = {
+		  "pubkeys": [
+			{
+			  "x": "0x27b5902d9d609b0402f7db682b079d76f6f7e36094b9df0a748e5e406df5fb9c",
+			  "y": "0x271f95593df8e23a03b03764d75398148b9b2b5ac7f7af86f8e6180bbbf05a17"
+			},
+			{
+			  "x": "0xe7ff9affc33287edbbe8283cf5c93f423c2961bd0abcc7438b7c3e4f6cadc3c",
+			  "y": "0xe8ee9b2e51d6911257f7964770e1c218b7a0b1e4f3a5f2e14b25958978d5903"
+			},
+			{
+			  "x": "0x2ab5d96a50a40e17706abb81a9f139b77148755125d7dcac09b0270a835908cb",
+			  "y": "0x82f6e4dd7479539089a15cea722eb5ee98698b5ca1c2c9bb23b7f991513f1e6"
+			},
+		  ],
+		  "privkeys": [
+			"0x14bc8131d0ddba5a50e9d20719e6907b831767902261233580858c20b3b7cf26",
+			"0x123d9f1531a73d2c05b3ea6311c70c7b0e7dc1afb37b3e0507196b54dc0300d1",
+			"0x9b9ebd0a8f0d2c1a84c2910d475873fb7abedf899d7dc8dd0360b3425795e20",
+		  ]
+		};
+
+	const N_signer = 1;
+
+	// [FIXME] - remove trash with substr
+	let message = "0x27b5902d9d609b0402f7db682b079d76f6f7e36094b9df0a748e5e406df5fb9c";
+	let hashp = bnCurve.hashInto(message.substr(2));
+
+	let pk = new BigInteger.BNCLASS(ring.privkeys[N_signer].substr(2), 16, "be"); 
+	pk = pk.umod(order);
+	// Calculate Tau
+	let hashSP = hashp.mul(pk);
+	await l(hashSP);
+
+	// [FIXME]!!!!!! = CHECK ZERO POINT
+	let G1 = bnCurve.pointFromCoordinates(1, 2); // zero point
+
+	// initialize both accumulators
+	let acc_b = G1;
+	let hashAcc = G1;
+
+	let csum = new BigInteger.BNCLASS(0, 16, "be");
+	
+	let gen = bnCurve.generator;
+
+	let ctlist = [];
+	let a = G1;
+	let b;
+	let ri;
+
+	for(let j = 0; j < ring.pubkeys.length; j++) {
+		if (j != N_signer) {
+			let data = secureRandom(32, {type: 'Buffer'});                                                                        
+        	let cj = new BN(data, 16, "be");                                                                               
+        	data = secureRandom(32, {type: 'Buffer'});                                                                            
+        	let tj = new BN(data, 16, "be");
+
+			// ParameterPointAdd returns the addition of c scaled by cj and tj as a curve poinT
+			let p1 = gen.mul(tj);
+			let pubk = bnCurve.pointFromCoordinates(ring.pubkeys[j].x.substr(2), ring.pubkeys[j].y.substr(2));
+			let p2 = pubk.mul(cj);
+			a = G1.add(p1).add(p2);
+
+			// HashPointAdd returns the addition of hashSP scaled by cj and c scaled by tj
+			let p3 = hashp.mul(tj);
+			let p4 = hashSP.mul(cj);
+			b = acc_b.add(p3).add(p4);
+
+			ctlist.push(cj);
+			ctlist.push(tj);
+
+			csum = csum.add(cj);
+		}
+
+		if (j == N_signer) {
+			let zero = new BigInteger.BNCLASS(0, 16, "be"); 
+			ctlist.push(zero);
+			ctlist.push(zero);
+			// [TEMP] [FIXME] GENERATE RANDOM ri!!
+			let ri = csum;
+			a = G1.mul(ri);
+			b = hashp.mul(ri);
+		}
+		// hash_acc = magic-sha-marshall-accumulator
+	}
   });
 
   it("complex test", async function () {
@@ -90,7 +188,6 @@ contract('Jury', function (accounts) {
     assert.equal(2, judg[5].toString()) //count
 
   });
-
 
 
 });

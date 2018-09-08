@@ -20,14 +20,25 @@
   },
   "homepage": "https://github.com/mixbytes/ring-multisig#readme",
   "dependencies": {
-    "openzeppelin-solidity": "^1.12.0",
     "babel-polyfill": "^6.23.0",
     "babel-preset-es2015": "^6.24.0",
     "babel-preset-stage-2": "^6.18.0",
     "babel-preset-stage-3": "^6.17.0",
     "babel-register": "^6.23.0",
-    "truffle": "^4.1.14",
-    "mobius-truffle-mixbytes": "^1.0.1"
+    "brorand": "^1.1.0",
+    "ecurve": "^1.0.6",
+    "ecurve-bn256": "^1.0.15",
+    "ethereumjs-util": "^5.2.0",
+    "hash.js": "^1.1.5",
+    "hmac-drbg": "^1.0.1",
+    "jsproover-mixbytes": "^1.0.0",
+    "minimalistic-assert": "^1.0.1",
+    "minimalistic-crypto-utils": "^1.0.1",
+    "mobius-truffle-mixbytes": "^1.0.1",
+    "openzeppelin-solidity": "^1.12.0",
+    "secure-random": "^1.1.1",
+    "solc": "^0.4.24",
+    "truffle": "^4.1.14"
   },
   "devDependencies": {}
 }
