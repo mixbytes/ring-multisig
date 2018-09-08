@@ -4,7 +4,7 @@
 - Roles: judge, juries
 ### User story:
 
-1. Judge publishes a decision on some topic, f.e "Ivan is guilty!"
+1. Judge publishes a decision on some topic, f.e "Death sentence hearing on case #01232"
 2. Judge publishes M public keys of juries and number N: N <= M - amount of needed votes "for"
 3. Each jury:
     - generates message, voting "for" or "against" judge's decision
