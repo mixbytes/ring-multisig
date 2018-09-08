@@ -27,7 +27,7 @@ class AppStore {
       duration: 24
     }, {
       creator: '0x65dd7690901500fdd6b26f0a4d722e1e859ad301',
-      topic: 'Should we disconnect from ventilator mrs. Illady?',
+      topic: 'Should we disconnect from life support mrs. Illady?',
       juryPks: [
         ['0x4faf79ffc854e56c3012a6ecd55583fdc32b7eb5', '0x4faf79ffc854e56c3012a6ecd55583fdc32b7eb5'],
         ['0x8528bc8e97b54568ba2660d300b135b14fb2dee1', '0x8528bc8e97b54568ba2660d300b135b14fb2dee1'],

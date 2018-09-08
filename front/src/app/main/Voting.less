@@ -1,0 +1,201 @@
+@row_margin: 20px;
+
+.voting {
+  background-color: #f5f5f5;
+  padding: 1em;
+  margin-bottom: 20px;
+  box-shadow: 2px 2px 11px 0px rgba(0,0,0,0.35);
+
+  .status_badge {
+    margin-bottom: 10px;
+
+    span {
+      padding: 4px 10px;
+      border-radius: 5px;
+    }
+
+    &.active span {
+      background-color: #f2ea0e;
+    }
+    &.accepted span {
+      background-color: #5aa32d;
+      color: #fff;
+    }
+    &.rejected span {
+      background-color: #ba2a2a;
+      color: #fff;
+    }
+  }
+
+  .voting_topic {
+    font-size: 22px;
+    color: #333;
+    line-height: 24px;
+    margin-bottom: @row_margin;
+  }
+
+  .row_name {
+    min-width: 100px;
+    font-size: 15px;
+    margin-top: -3px;
+  }
+
+  .voting_creator {
+    margin-bottom: @row_margin;
+    display: flex;
+  }
+
+  .voting_jury {
+    margin-bottom: @row_margin;
+    display: flex;
+    font-size: 10px;
+    line-height: 15px;
+  }
+
+  .voting_timeframe-info {
+    margin-top: 5px;
+  }
+
+  .voting_timeline {
+    display: flex;
+    margin-bottom: @row_margin;
+    min-height: 50px;
+    margin-top: 5px;
+
+    > div {
+      position: relative;
+      padding: 3px 5px;
+
+      &::after {
+        content: "\25b6";
+        display: block;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        font-size: 50px;
+        margin: -5px 0 0 -4px;
+        color: rgba(255, 255, 255, 0.1);
+      }
+
+      div {
+        text-align: right;
+      }
+    }
+
+    .passed {
+      background-color: #5aa32d;
+      color: #fff;
+    }
+
+    .left {
+      background-color: #86c45a;
+    }
+  }
+
+  .voting_votes-info {
+    margin-top: 5px;
+  }
+
+  .voting_votes-and-quorum {
+    display: flex;
+    min-height: 50px;
+    margin-top: 5px;
+
+    > div {
+      flex-grow: 1;
+      flex-basis: 0;
+      background-color: #7bb5e5;
+      padding: 3px 5px;
+      position: relative;
+
+      &.quorum {
+        background-color: #3786c6;
+
+        div {
+          color: #fff;
+        }
+      }
+
+      &.quorum.votes {
+        background-color: #215a89;
+      }
+
+      &::after {
+        content: "\25b6";
+        display: block;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        font-size: 50px;
+        margin: -5px 0 0 -4px;
+        color: rgba(255, 255, 255, 0.1);
+      }
+
+      div {
+        font-size: 12px;
+        text-align: right;
+      }
+    }
+  }
+
+  .vote_form {
+    margin-top: @row_margin;
+
+    .rjsf {
+      display: flex;
+      margin-right: 10px;
+    }
+
+    fieldset {
+      border: 0;
+      padding: 0;
+      maegin: 0;
+    }
+
+    .form-group {
+      flex-grow: 1;
+    }
+
+    .form-control {
+      width: 100%;
+      border: 1px solid #ccc;
+      font-size: 12px;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 5px;
+    }
+
+    .form-group {
+      margin-bottom: 10px;
+    }
+
+    button {
+      margin-bottom: 30px;
+      margin-left: 10px;
+      padding: 10px 40px;
+      font-size: 14px;
+      background-color: #5aa32d;
+      color: #000;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .text-danger {
+      color: #ba2a2a;
+    }
+
+  }
+
+  .vote_btn button {
+    margin-top: @row_margin;
+    padding: 10px 40px;
+    font-size: 14px;
+    background-color: #f2ea0e;
+    border-radius: 5px;
+  }
+
+}

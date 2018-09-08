@@ -12,7 +12,7 @@ class AddForm extends Component {
   render() {
     const schema = {
       type: "object",
-      required: ["title", "publicKeys", "threshold", "deadline"],
+      required: ["judgmentMatter", "publicKeys", "threshold", "deadline"],
       properties: {
         judgmentMatter: {
           type: "string",
