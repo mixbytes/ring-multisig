@@ -14,9 +14,20 @@ import { getJudgments } from '../../lib/eth'
 @observer
 class Main extends Component {
 
-  componentWillMount() {
-    getJudgments(console.log);
+  constructor(props) {
+    super(props);
+    // Don't call this.setState() here!
+    AppStore.loaderShow.bind(AppStore);
+    AppStore.loaderHide.bind(AppStore);
+    AppStore.setVotings.bind(AppStore);
+
+    AppStore.loaderShow();
+    getJudgments((judgments)=>{
+      AppStore.loaderHide();
+      AppStore.setVotings(judgments);
+    });
   }
+
 
   render () {
     let votings = AppStore.votings;

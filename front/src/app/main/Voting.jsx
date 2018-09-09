@@ -10,6 +10,11 @@ import "./Voting.less";
 
 @observer
 class Voting extends Component {
+
+  makeDecision() {
+    console.log(11)
+  }
+
   render() {
     let {voting, i} = this.props;
     let startTime = moment.unix(voting.startTime);
@@ -32,7 +37,20 @@ class Voting extends Component {
       properties: {
         privKey: {
           type: "string",
-          title: "Private key"
+          title: "Private key",
+          description: "For demonstration purposes you can select one of the private keys for generated public keys",
+          "enum": [
+    "0x141fc3c2364deb96d96e15d10f141bc8ad66516572aa0c3756d52452e6b895cc",
+    "0x14564e8de1e436ae7464b0f942d6058d147095590835439e1159926c01ee0112",
+    "0x2c6e0e2ab94259e6e3c73ed71ba34026bb2ab0f9fcef43d2be7581dbb3e8daf6",
+    "0x609077d3db04a6c892720b5176409cb6ea8ce3648e3de9529b3328e65e29ac1",
+    "0x1ca3f093091b8b95120b30399893c7adc41d90a8da55923defecf6867f83e15a",
+    "0xd93286bfdde96e997d45f25daa591c10c01951dc72887ec7a25059f773132c0",
+    "0x1adce4fa183f1923252d4077b04e538324e76b7e99e0db7defa114d004e758b5",
+    "0x5b564232e2b314d25774364546e5b6067f77b77b7695d064d5aa3732ca736d8",
+    "0x24fceee418c1263cffa5f3f3e2ced0ccdcb341296c10bd51b362a1ab107235c0",
+    "0xccda9b8f26b2a8cf88d40e2a8e3ee4d8c8c284cf49ac6032fd2316dea5ff0cf"
+          ],
         },
       },
     };
@@ -124,7 +142,7 @@ class Voting extends Component {
           <div className="vote_form">
             <Form schema={schema}
               onChange={() => console.log("changed")}
-              onSubmit={() => console.log("submitted")}
+              onSubmit={this.makeDecision}
               onError={() => console.log("errors")}
             >
               <div className="vote_btn">

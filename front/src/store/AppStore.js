@@ -12,46 +12,7 @@ class AppStore {
 
   constructor() {
     this.currentScreen = screens.MAIN;
-    this.votings = [{
-      creator: '0xA7D99Ad32b31B6F901bbC2F8EB8952fEa1653F40',
-      topic: 'Should we execute mr. Badguy?',
-      juryPks: [
-        ['0x4faf79ffc854e56c3012a6ecd55583fdc32b7eb5', '0x4faf79ffc854e56c3012a6ecd55583fdc32b7eb5'],
-        ['0x8528bc8e97b54568ba2660d300b135b14fb2dee1', '0x8528bc8e97b54568ba2660d300b135b14fb2dee1'],
-        ['0xA7D99Ad32b31B6F901bbC2F8EB8952fEa1653F40', '0xA7D99Ad32b31B6F901bbC2F8EB8952fEa1653F40'],
-        ['0x65dd7690901500fdd6b26f0a4d722e1e859ad301', '0x65dd7690901500fdd6b26f0a4d722e1e859ad301']
-      ],
-      quorum: 1,
-      votes: 0,
-      startTime: '1436397367',
-      duration: 24
-    }, {
-      creator: '0x65dd7690901500fdd6b26f0a4d722e1e859ad301',
-      topic: 'Should we disconnect from life support mrs. Illady?',
-      juryPks: [
-        ['0x4faf79ffc854e56c3012a6ecd55583fdc32b7eb5', '0x4faf79ffc854e56c3012a6ecd55583fdc32b7eb5'],
-        ['0x8528bc8e97b54568ba2660d300b135b14fb2dee1', '0x8528bc8e97b54568ba2660d300b135b14fb2dee1'],
-        ['0xA7D99Ad32b31B6F901bbC2F8EB8952fEa1653F40', '0xA7D99Ad32b31B6F901bbC2F8EB8952fEa1653F40'],
-        ['0x65dd7690901500fdd6b26f0a4d722e1e859ad301', '0x65dd7690901500fdd6b26f0a4d722e1e859ad301']
-      ],
-      quorum: 2,
-      votes: 1,
-      startTime: '1536351200',
-      duration: 48
-    }, {
-      creator: '0x8528bc8e97b54568ba2660d300b135b14fb2dee1',
-      topic: 'Should centralized exchanges burn in hell as much as possible?',
-      juryPks: [
-        ['0x4faf79ffc854e56c3012a6ecd55583fdc32b7eb5', '0x4faf79ffc854e56c3012a6ecd55583fdc32b7eb5'],
-        ['0x8528bc8e97b54568ba2660d300b135b14fb2dee1', '0x8528bc8e97b54568ba2660d300b135b14fb2dee1'],
-        ['0xA7D99Ad32b31B6F901bbC2F8EB8952fEa1653F40', '0xA7D99Ad32b31B6F901bbC2F8EB8952fEa1653F40'],
-        ['0x65dd7690901500fdd6b26f0a4d722e1e859ad301', '0x65dd7690901500fdd6b26f0a4d722e1e859ad301']
-      ],
-      quorum: 3,
-      votes: 3,
-      startTime: '1536340200',
-      duration: 96
-    }];
+    this.votings = [];
     this.showAddVote = false;
     this.showLoader = false;
   }
@@ -66,14 +27,44 @@ class AppStore {
     this.showAddVote = !this.showAddVote;
   }
 
-  @action("set votings")
-  setVotings(votings) {
-    this.votings = votings;
+  @action('set votings')
+  setVotings (votings) {
+    //input is in blockchain format
+    let res = []
+    votings.forEach(el => {
+      let pks = []
+      for(let i=0;i<el[1].length;i++) {
+        pks.push([web3.toHex(el[1][i]), web3.toHex(el[2][i])])
+      }
+
+      res.push({
+        creator: el[9],
+        topic: el[0],
+        juryPks: pks,
+        quorum: el[3],
+        votes: el[5],
+        startTime: el[7],
+        duration: (el[8]-el[7])/3600,
+        signMessage: el[6]
+      })
+    })
+
+    this.votings = res
   }
 
   @action("toggle loader")
   toggleLoader() {
     this.showLoader = !this.showLoader;
+  }
+
+  @action("show loader")
+  loaderShow() {
+    this.showLoader = true;
+  }
+
+  @action("hide loader")
+  loaderHide() {
+    this.showLoader = false;
   }
 
 }
