@@ -5,7 +5,7 @@ const secureRandom = require("secure-random");
 const BN = require("bn.js");
 const ethereumjs_util = require("ethereumjs-util");
 
-function getRingSignature (message, ringdata) {
+export let getRingSignature = (message, ringdata) => {
   const bnCurve = new ECCurve('bn256')
   const order = bnCurve.order
   const signatureGenerator = bnCurve.generator
