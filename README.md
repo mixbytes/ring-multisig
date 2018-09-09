@@ -46,7 +46,11 @@ The new curves, designed for anonymous voting, low-level programming in Javascri
 Finally fix the signing algorythm (at the end of hackathon we still have problems in signing, but the 99% of algorythm is checked and we're sure, that it will be fixed in next few days of work). Publish final universal solution (JS component and Solidity library) to use by ane Solidity developer, wishing to add anonimous voting for any contract action.
 
 
-## Usage of library
+## Library
+
+Project above is only usage demo of library which can be used for prohibit execution of any function until `threshold` ring signatures would submited.
+
+### Usage
 
 - Install lib via npm: `npm install ring-multisig`
 - Initialize [Single ring](https://github.com/mixbytes/ring-multisig/blob/master/contracts/usage_examples/Single.sol#L22) or [multiple rings](https://github.com/mixbytes/ring-multisig/blob/master/contracts/usage_examples/Jury.sol#L113)
