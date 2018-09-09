@@ -23,6 +23,8 @@ contract Jury is Ownable, RingMultisigned {
         bool isGuilty;
         RingMultisig ringMultisig;
         uint256 deadline;
+        uint256 startedAt;
+        address author;
     }
 
     /************************** PROPERTIES **************************/
@@ -65,7 +67,10 @@ contract Jury is Ownable, RingMultisigned {
             uint256 juryThreshold,
             bool isGuilty,
             uint256 alreadyMadeDecisions,
-            bytes32 message //unique hash used to create ring signature
+            bytes32 signMessage, //unique hash used to create ring signature
+            uint256 startedAt,
+            uint256 deadline,
+            address author
         )
     {
         judgmentMatter = judgments[_index].judgmentMatter;
@@ -78,7 +83,10 @@ contract Jury is Ownable, RingMultisigned {
         juryThreshold = judgments[_index].ringMultisig.threshold();
         isGuilty = judgments[_index].isGuilty;
         alreadyMadeDecisions = judgments[_index].ringMultisig.getTagsCount();
-        message = judgments[_index].ringMultisig.getMessage();
+        signMessage = judgments[_index].ringMultisig.getMessage();
+        startedAt = judgments[_index].startedAt;
+        deadline = judgments[_index].deadline;
+        author = judgments[_index].author;
     }
 
     /************************** PUBLIC **************************/
@@ -103,7 +111,9 @@ contract Jury is Ownable, RingMultisigned {
                 hash(_judgmentMatter),
                 false,
                 new RingMultisig(_publicKeysX, _publicKeysY, _juryThreshold, hash(_judgmentMatter)), // todo proxy
-                deadline
+                deadline,
+                now,
+                msg.sender
             );
 
         judgmentsIndexes.push( hash(_judgmentMatter) );
