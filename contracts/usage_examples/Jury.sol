@@ -9,7 +9,7 @@ import "../RingMultisig.sol";
  * Example of RingMultisig usage which runs several anonymous votes
  *
  */
-contract Jury is /*Ownable,*/ RingMultisigned {
+contract Jury is Ownable, RingMultisigned {
 
     constructor() public {
 
