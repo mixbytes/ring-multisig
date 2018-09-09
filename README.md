@@ -23,6 +23,8 @@ It's planned to implement this ring-signing as a library, to use with any solidi
 Solidity library to make any solidity function wrapped in "ring-multisig" voting, using 'bn256' curve (well designed for anonimous voting). Ring-signatures now used mostly for mixing ether and tokens, but we want to show the possibility to use ring-signatures to other important human activities.
 
 As an example we've made the DApp to anonymously vote on critical decisions (euthanasia, death senstence, etc.) using BN256 ellicptic curve. Such solutions are also useful for voting in DAOs and any other places, that require collective decisions without revealing voters' identities. Also, we plan to use this library for our own contract constructors.
+
+Another way to implement anonimous multisig capabilities is zkS[NT]ARKs-based voting and some other secret sharing schemes. We'll try them in future works.
       
 ## Inspiration
 We want to solve problem of critical decision making and unability to gurantee privacy of those collective decisions (for examples decisions of juries). Also, we want to give developers an easy way to implement ring-signature-based voting on arbitrary action in Ethereum contracts, using simple configuration procedure.
