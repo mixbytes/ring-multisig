@@ -11,8 +11,8 @@ import "./Voting.less";
 @observer
 class Voting extends Component {
 
-  makeDecision() {
-    console.log(11)
+  makeDecision(data) {
+    console.log(data.formData)
   }
 
   render() {
@@ -52,8 +52,15 @@ class Voting extends Component {
     "0xccda9b8f26b2a8cf88d40e2a8e3ee4d8c8c284cf49ac6032fd2316dea5ff0cf"
           ],
         },
+        signMessage: {type: "string"},
+        judgmentHash: {type: "string"}
       },
     };
+
+    let ui_schema = {
+      signMessage: {"ui:widget": "hidden"},
+      judgmentHash: {"ui:widget": "hidden"}
+    }
 
     return (
       <div className="voting" key={i}>
@@ -140,11 +147,13 @@ class Voting extends Component {
 
         {isActive &&
           <div className="vote_form">
-            <Form schema={schema}
+            <Form schema={schema} uiSchema={ui_schema}
               onChange={() => console.log("changed")}
               onSubmit={this.makeDecision}
               onError={() => console.log("errors")}
+                  formData={ {signMessage: voting.signMessage, judgmentHash: voting.hash} }
             >
+              <input type="hidden" name="signMessage" value={voting.signMessage}/>
               <div className="vote_btn">
                 <button className="btn" type="submit">Cast a Vote</button>
               </div>

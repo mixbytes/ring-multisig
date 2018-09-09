@@ -46,7 +46,8 @@ class AppStore {
         votes: el[5],
         startTime: el[7],
         duration: (el[8]-el[7])/3600,
-        signMessage: el[6]
+        signMessage: el[6],
+        hash: el[10]
       })
     })
 

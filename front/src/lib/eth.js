@@ -33,7 +33,9 @@ function reduceJudgments (hashes, results, finalCallback) {
     finalCallback(results)
     return
   }
-  getContract().getJudgment(hashes.pop(), (error, response) => {
+  let hash = hashes.pop()
+  getContract().getJudgment(hash, (error, response) => {
+    response.push(hash)
     results.push(response)
     reduceJudgments(hashes, results, finalCallback)
   })
