@@ -4,12 +4,12 @@
 
 
 ### User story:
-- Roles: judge, juries
+Roles: judge (voting initiator), juries.
 
 1. Judge publishes a decision on some topic, f.e "Death sentence hearing on case #01232"
 2. Judge publishes M public keys of juries and number N: N <= M - amount of needed votes "for"
 3. Each jury:
-    - generates message, voting "for" or "against" judge's decision
+    - generates message, voting "for" judge's decision. Voting "against" is passive (just do nothing)
     - generates ring-signature for this message, using public keys of other juries
     - sends transaction with ring-signature to contract
 4. Contract collects each correct signature, and increases number of votes "for" if all ok
