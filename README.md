@@ -1,8 +1,10 @@
-# Ring-multisig
+# Ring Signatures based anonymous voting
+## (Barreto-Naehrig 256 bit Elliplic Curve)
+[Presentation in Google Slides](https://docs.google.com/presentation/d/17zCLXaHwzHTcYjjKMqEyFRZMnqpjynqsoTjk5YdQ7Yk)
 
-## Ring signature based voting for ETH Berlin hackathon
-- Roles: judge, juries
+
 ### User story:
+- Roles: judge, juries
 
 1. Judge publishes a decision on some topic, f.e "Death sentence hearing on case #01232"
 2. Judge publishes M public keys of juries and number N: N <= M - amount of needed votes "for"
