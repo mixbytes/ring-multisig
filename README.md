@@ -2,6 +2,8 @@
 ## (Barreto-Naehrig 256 bit Elliplic Curve)
 [Presentation in Google Slides](https://docs.google.com/presentation/d/17zCLXaHwzHTcYjjKMqEyFRZMnqpjynqsoTjk5YdQ7Yk)
 
+[Live demo](https://ring-multisig.mixbytes.io/)
+[Contract in testnet](https://rinkeby.etherscan.io/address/0x2e8aed5091f347c51976e28c00874a1cdde461a1#code)
 
 ### User story:
 Roles: judge (voting initiator), juries.
@@ -38,9 +40,14 @@ There is no ready implementation on ring signatures using bn256 curve, usable wi
 Elliptic curves cryptography implementation in JS. Usage of ring-signatures not only to build mixers for tokens and ether.
 
 ## What I learned
-The new curves, designed for anonimous voting, low-level programming in Javascript (OMG) 
+The new curves, designed for anonymous voting, low-level programming in Javascript (OMG) 
 
 ## What's next for Ring Signatures Anonymous Voting
 Finally fix the signing algorythm (at the end of hackathon we still have problems in signing, but the 99% of algorythm is checked and we're sure, that it will be fixed in next few days of work). Publish final universal solution (JS component and Solidity library) to use by ane Solidity developer, wishing to add anonimous voting for any contract action.
 
 
+## Usage of library
+
+- Install lib via npm: `npm install ring-multisig`
+- Initialize [Single ring](https://github.com/mixbytes/ring-multisig/blob/master/contracts/usage_examples/Single.sol#L22) or [multiple rings](https://github.com/mixbytes/ring-multisig/blob/master/contracts/usage_examples/Jury.sol#L113)
+- Use modifier [ringMultisigned](https://github.com/mixbytes/ring-multisig/blob/master/contracts/RingMultisig.sol#L37) for any function ([example](https://github.com/mixbytes/ring-multisig/blob/master/contracts/usage_examples/Single.sol#L78)). It will be executed only after `threshold` calls with ring signatures
