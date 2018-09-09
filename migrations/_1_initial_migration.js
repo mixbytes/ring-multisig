@@ -1,5 +1,13 @@
-var Migrations = artifacts.require("./Migrations.sol");
+var Jury = artifacts.require("./Jury.sol");
+
+
 
 module.exports = function(deployer) {
-  deployer.deploy(Migrations);
+  deployer.then(function() {
+    return Jury.new();
+  }).then(function(instance) {
+
+    console.log('Jury: ok ' + instance.address);
+
+  })
 };

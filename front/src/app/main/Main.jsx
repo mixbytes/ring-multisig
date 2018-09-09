@@ -9,29 +9,36 @@ import AddForm from "./AddForm";
 import Voting from "./Voting";
 
 import "./Main.less";
+import { getJudgments } from '../../lib/eth'
 
 @observer
 class Main extends Component {
-  render() {
+
+  componentWillMount() {
+    getJudgments(console.log);
+  }
+
+  render () {
     let votings = AppStore.votings;
 
     return (
       <div>
         <h1>Ring Signatures (Barreto-Naehrig 256 bit Elliplic Curve) based anonymous voting</h1>
-        <h3>Create a new proposal (i.e. death sentence; life support disconnet). Add juries. Wait for the consensus decision.</h3>
+        <h3>Create a new proposal (i.e. death sentence; life support disconnet). Add juries. Wait for the consensus
+          decision.</h3>
 
         <div className="add_btn">
           <button className="btn" onClick={AppStore.toggleAddVote.bind(AppStore)}>New Proposal</button>
         </div>
 
         {AppStore.showAddVote &&
-          <AddForm />
+        <AddForm/>
         }
 
         {votings &&
-          votings.map((voting, i) => (
-            <Voting voting={voting} i={i} key={i} />
-          ))
+        votings.map((voting, i) => (
+          <Voting voting={voting} i={i} key={i}/>
+        ))
         }
       </div>
     );

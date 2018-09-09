@@ -2,14 +2,20 @@ import React, { Component } from "react";
 import { observer } from "mobx-react";
 import Form from "react-jsonschema-form";
 
+import AppStore from "../../store/AppStore";
+import Loader from "../../helpers/loader/Loader";
 import "./AddForm.less";
-import { getContract } from '../../lib/eth'
+import { getContract, waitTx } from '../../lib/eth';
 
 @observer
 class AddForm extends Component {
+  constructor(props) {
+    super(props);
+    AppStore.toggleLoader.bind(AppStore);
+    AppStore.toggleAddVote.bind(AppStore)
+  }
 
   addJudgment (e, d) {
-
     let keysX = [];
     let keysY = [];
     e.formData.publicKeys.trim().split('\n').forEach(el => {
@@ -26,6 +32,15 @@ class AddForm extends Component {
         keysY,
         e.formData.threshold,
         (new Date() / 1000) + e.formData.deadline * 60,
+        (smth, tx) => {
+          AppStore.toggleLoader();
+          waitTx(tx, null, () => {
+            alert('success');
+            AppStore.toggleLoader();
+            AppStore.toggleAddVote();
+            // AppStore.setVotings(votings);
+          })
+        }
       );
     } catch (e) {
       alert(e.message);
@@ -78,8 +93,14 @@ class AddForm extends Component {
           onSubmit={this.addJudgment}
           onError={() => console.log("errors")}
         >
-          <div>
+          <div className="button-n-loader">
             <button type="submit">Submit vote</button>
+            {AppStore.loader &&
+              <div className="loader">
+                <Loader width={50} />
+                <div>Waiting for miners</div>
+              </div>
+            }
           </div>
         </Form>
       </div>
