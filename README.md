@@ -18,18 +18,29 @@ Roles: judge (voting initiator), juries.
 It's planned to implement this ring-signing as a library, to use with any solidity function
 
 ## Elevator Pitch
-dApp to anonymously vote on critical decisions (euthanasia, death senstence, etc.) using BN256 ellicptic curve
-
+Solidity library to make any solidity function wrapped in "ring-multisig" voting, using 'bn256' curve (well designed for anonimous voting). Ring-signatures now used mostly for mixing ether and tokens, but we want to show the possibility to use ring-signatures to other important human activities. As an example we've made the DApp to anonymously vote on critical decisions (euthanasia, death senstence, etc.) using BN256 ellicptic curve. Such solutions are also useful for voting in DAOs and any other places, that require collective decisions without revealing voters' identities. Also, we plan to use this library for our own contract constructors.
+      
 ## Inspiration
-We want to solve problem of critical decision making and unability to gurantee privacy of those collective decisions.
+We want to solve problem of critical decision making and unability to gurantee privacy of those collective decisions (for examples decisions of juries). Also, we want to give developers an easy way to implement ring-signature-based voting on arbitrary action in Ethereum contracts, using simple configuration procedure.
 
 ## What it does
-dApp allows judge to create a new proposal and nominate juries who in turn can cast votes using their respective private keys.
-Prosopal creator specifies criteria for decision to be enforced (N of M signatures).
+It allows any Solidity developer simply add anonymous voting ("N-of-M" votes "for") for any contract action(like multisig, but anonymous).
+The example DApp allows judge to create a new proposal and nominate juries who in turn can cast votes using their respective private keys. Judge specifies criteria for decision to be enforced (N of M signatures). 
 Juries cast their votes that are counted by smart contract preserving full privacy.
 
-## How I built it
-## Challenges I ran into
-## Accomplishments that I'm proud of
+## How we built it
+We've taken two implementaions, Solidity part from Mobius project and JS implementation from BulletproofJS(BANKEX) and tried to connect them. The result is solidity function modifier, allowing set N of M linked ring signatures required for action to be performed in contract. At the end of hackathon we still have problems in signing, but the 99% of algorythm is checked and we're sure, that it will be fixed in next few days of work.
+
+## Challenges we ran into
+There is no ready implementation on ring signatures using bn256 curve, usable with Solidity and JS, so, you cannot simply use ring-signatures for anonmous voting in Ethereum DApps, so, the challenge was to make this heterogenous code to work.
+
+## Accomplishments that we're proud of
+Elliptic curves cryptography implementation in JS. Usage of ring-signatures not only to build mixers for tokens and ether.
+
 ## What I learned
+The new curves, designed for anonimous voting, low-level programming in Javascript (OMG) 
+
 ## What's next for Ring Signatures Anonymous Voting
+Finally fix the signing algorythm (at the end of hackathon we still have problems in signing, but the 99% of algorythm is checked and we're sure, that it will be fixed in next few days of work). Publish final universal solution (JS component and Solidity library) to use by ane Solidity developer, wishing to add anonimous voting for any contract action.
+
+
