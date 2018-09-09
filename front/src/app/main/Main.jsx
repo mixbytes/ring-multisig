@@ -20,14 +20,13 @@ class Main extends Component {
     AppStore.loaderShow.bind(AppStore);
     AppStore.loaderHide.bind(AppStore);
     AppStore.setVotings.bind(AppStore);
+  }
 
-    AppStore.loaderShow();
-    getJudgments((judgments)=>{
-      AppStore.loaderHide();
+  componentDidMount() {
+    getJudgments((judgments) => {
       AppStore.setVotings(judgments);
     });
   }
-
 
   render () {
     let votings = AppStore.votings;
@@ -43,13 +42,13 @@ class Main extends Component {
         </div>
 
         {AppStore.showAddVote &&
-        <AddForm/>
+          <AddForm />
         }
 
         {votings &&
-        votings.map((voting, i) => (
-          <Voting voting={voting} i={i} key={i}/>
-        ))
+          votings.map((voting, i) => (
+            <Voting voting={voting} i={i} key={i}/>
+          ))
         }
       </div>
     );

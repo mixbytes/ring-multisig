@@ -9,6 +9,7 @@ class AppStore {
   @observable currentScreen;
   @observable votings;
   @observable showAddVote;
+  @observable showLoader;
 
   constructor() {
     this.currentScreen = screens.MAIN;

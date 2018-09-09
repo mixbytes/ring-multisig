@@ -5,14 +5,14 @@ import Form from "react-jsonschema-form";
 import AppStore from "../../store/AppStore";
 import Loader from "../../helpers/loader/Loader";
 import "./AddForm.less";
-import { getContract, getJudgments, waitTx } from '../../lib/eth'
+import { getContract, getJudgments, waitTx } from '../../lib/eth';
 
 @observer
 class AddForm extends Component {
   constructor(props) {
     super(props);
     AppStore.toggleLoader.bind(AppStore);
-    AppStore.toggleAddVote.bind(AppStore)
+    AppStore.toggleAddVote.bind(AppStore);
     AppStore.loaderShow.bind(AppStore);
     AppStore.loaderHide.bind(AppStore);
     AppStore.setVotings.bind(AppStore);
@@ -37,12 +37,12 @@ class AddForm extends Component {
         (new Date() / 1000) + e.formData.deadline * 60 * 60,
         (smth, tx) => {
           AppStore.loaderShow();
+          console.log('show!');
           waitTx(tx, null, () => {
             getJudgments((judgments)=>{
               AppStore.loaderHide();
               AppStore.toggleAddVote();
               AppStore.setVotings(judgments);
-
             });
           })
         }
@@ -111,8 +111,8 @@ class AddForm extends Component {
           onError={() => console.log("errors")}
         >
           <div className="button-n-loader">
-            <button type="submit">Submit vote</button>
-            {AppStore.loader &&
+            <button type="submit">Submit proposal</button>
+            {AppStore.showLoader &&
               <div className="loader">
                 <Loader width={50} />
                 <div>Waiting for miners</div>
