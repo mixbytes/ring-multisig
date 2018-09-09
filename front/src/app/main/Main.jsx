@@ -33,6 +33,7 @@ class Main extends Component {
 
     return (
       <div>
+        <p style={{color: "red", fontSize: "16px"}}>Don't forget to unlock MetaMask and switch it to Rinkeby network!</p>
         <h1>Ring Signatures (Barreto-Naehrig 256 bit Elliplic Curve) based anonymous voting</h1>
         <h3>Create a new proposal (i.e. death sentence; life support disconnet). Add juries. Wait for the consensus
           decision.</h3>
