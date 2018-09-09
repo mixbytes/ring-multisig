@@ -5,6 +5,7 @@ import { ECCurve } from 'jsproover-mixbytes/prover/curve/curve';
 
 const secureRandom = require("secure-random");
 const BN = require("bn.js");
+const ethereumjs_util = require("ethereumjs-util");
 
 const Jury = artifacts.require("Jury.sol");
 const l = console.log;
@@ -39,7 +40,8 @@ contract('Jury', function (accounts) {
 	let hashSP = hashp.mul(pk);
 	// await l(hashSP.serialize(true));
 
-	let hash_acc = bnCurve.hash(Buffer.concat([hashp.serialize(true).slice(0,32), hashSP.serialize(true)]));
+	let hash_acc = ethereumjs_util.sha256(Buffer.concat([hashp.serialize(true).slice(0,32), hashSP.serialize(true)]));
+	
 	let csum = new BigInteger.BNCLASS(0, 16, "be");
 	let gen = bnCurve.generator;
 
@@ -83,7 +85,8 @@ contract('Jury', function (accounts) {
 			a = gen.mul(ri);
 			b = hashp.mul(ri);
 		}
-		hash_acc = bnCurve.hash(Buffer.concat([hash_acc, a.serialize(true), b.serialize(true)]));
+
+		hash_acc = ethereumjs_util.sha256(Buffer.concat([hash_acc, a.serialize(true), b.serialize(true)]));
 	}
 
 	// [TODO] remove unneeded "umods"
@@ -96,19 +99,66 @@ contract('Jury', function (accounts) {
 	c = c.sub(csum).umod(order);
 	
 	let cx = new BN(c, 16, "be");
-	cx = cx.mul(pk).umod(order);
+	cx = cx.mul(pk);
+	cx = cx.umod(order);
 
 	let ti = new BN(ri, 16, "be");
-	ti = ti.sub(cx).umod(order);
+	ti = ti.sub(cx);
+	ti = ti.umod(order);
 
 	ctlist[2 * N_signer] = c;
 	ctlist[2 * N_signer + 1] = ti;
 
-	return { "tau": hashSP.serialize(true), "ctlist": ctlist };
+	let x = "0x" + hashSP.serialize(true).slice(0,32).toString('hex');
+	let y = "0x" + hashSP.serialize(true).slice(32,64).toString('hex');
+
+	let ctlist_hex = []
+	for (let i =0; i < ctlist.length; i++) {
+		ctlist_hex[i] = "0x" + ctlist[i].toString('hex');
+	}
+	return { "tau": {'x': x, 'y': y }, "ctlist": ctlist_hex };
   }
 
   it("curve test", async function () {
-	let ringdata = {
+	let message = "0x14462573adecc6b213bfd0290aea56d908c2b491d3a26b1e35febceb9153c784";
+
+    await jury.add(
+      'Do smth',
+      [
+        "0x26db77bfb9f8a2876266d5302eb034769fdde10049b6849abb9f77592ccfb91d",
+        "0x17697e6b2be2c0a6a169f12105d35021cedcaf4784f178c4a1f9d7a14f22b4cf",
+        "0x5506a71b93730e9f8abc99b0ef8e2940fdfdfd2a6c3892bb3a5f47c4634e31c"
+      ],
+      [
+        "0x1e40a7be578811ce812589748470effdb7f0185338ce63adcc2bf94f94c5180f",
+        "0x9ff14963bc007efecf73247b0e458dd2cac4ec2a7aa11a13a87b90843be5969",
+        "0x163ec7c4820c2234c35c4b309573367def35441d8e14b7fd2a29f2e4cd19b12a"
+      ],
+      2,
+      Math.round(new Date/1000) + 60,
+      {from: roles.owner}
+    );
+
+	let ringdata0 = {
+		  "pubkeys": [
+			{
+			  "x": "0x26db77bfb9f8a2876266d5302eb034769fdde10049b6849abb9f77592ccfb91d",
+			  "y": "0x1e40a7be578811ce812589748470effdb7f0185338ce63adcc2bf94f94c5180f"
+			},
+			{
+			  "x": "0x17697e6b2be2c0a6a169f12105d35021cedcaf4784f178c4a1f9d7a14f22b4cf",
+			  "y": "0x9ff14963bc007efecf73247b0e458dd2cac4ec2a7aa11a13a87b90843be5969"
+			},
+			{
+			  "x": "0x5506a71b93730e9f8abc99b0ef8e2940fdfdfd2a6c3892bb3a5f47c4634e31c",
+			  "y": "0x163ec7c4820c2234c35c4b309573367def35441d8e14b7fd2a29f2e4cd19b12a"
+			}
+		  ],
+		  "privkey": "0x16557fa436d7336e6e23092e4b4bc403bed70991044523338269a146257a0250",
+		  "privkeyindex" : 0
+	};
+
+	let ringdata1 = {
 		  "pubkeys": [
 			{
 			  "x": "0x26db77bfb9f8a2876266d5302eb034769fdde10049b6849abb9f77592ccfb91d",
@@ -126,11 +176,30 @@ contract('Jury', function (accounts) {
 		  "privkey": "0x29af60404e8a85a51dad7bf906e76d632e662c66e6b614b591ec87e378eeb8d4",
 		  "privkeyindex" : 1
 		};
-		let message = "0x14462573adecc6b213bfd0290aea56d908c2b491d3a26b1e35febceb9153c784";	
-		let res = getRingSignature(message, ringdata);
-		// await l(res);
+
+	    let indexes = await jury.getJudgmentsIndexes();
+    	let index0 = indexes[0];
+
+		let sign0 = getRingSignature(message, ringdata0);
+		//await l(sign0);
+		//let sign1 = getRingSignature(message, ringdata1);
+		//await l(sign1);
+
+		let judg;
+		
+		// await jury.guilty(index0, [sign0.tau.x, sign0.tau.y], sign0.ctlist)
+		//judg = await jury.getJudgment(index0)
+		//assert.equal(false, judg[4]) //guilty
+		//assert.equal(1, judg[5].toString()) //count
+
+ 		//await jury.guilty(index0, [sign1.tau.x, sign1.tau.y], sign1.ctlist)
+    	//judg = await jury.getJudgment(index0)
+    	//assert.equal(true, judg[4]) //guilty
+    	//assert.equal(2, judg[5].toString()) //count
+
 
   });
+
 
   it("complex test", async function () {
 
@@ -164,8 +233,7 @@ contract('Jury', function (accounts) {
     );
     //l((await jury.getJudgment(index0))[6])
     // message 0x14462573adecc6b213bfd0290aea56d908c2b491d3a26b1e35febceb9153c784
-
-    let sign0 = {
+	let sign0 = {
       "tau": {
         "x": "0x2fd2255f903c735765271bf82a924a7c9dbbcca28711212afa694c16cdf3bba",
         "y": "0x989e0e4285df0ba6c247c2917854cfb7b36ac2ffae09931bbc8842b9f7a76e6"
@@ -208,6 +276,5 @@ contract('Jury', function (accounts) {
     assert.equal(2, judg[5].toString()) //count
 
   });
-
 
 });
